@@ -27,10 +27,21 @@ rpcpassword=BitcoinPassword # Needed for RPC Auth
 
 ### Installing
 
-Clone this repository and install dependencies using pip3 :
+Clone this repository.
+
+#### Install pypy3 (linux)
+
 ```sh
-pip3 install configparser
-pip3 install requests
+$ add-apt-repository ppa:pypy/ppa
+$ apt update
+$ apt install pypy3
+```
+
+#### Install python dependencies
+
+Install dependencies using pip3 :
+```sh
+$ pip3 install -r requirements
 ```
 
 ### Running
