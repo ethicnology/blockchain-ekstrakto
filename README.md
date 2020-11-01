@@ -17,12 +17,18 @@ You need an access to a [Bitcoin Core](https://bitcoin.org/en/download) full nod
 Follow this [tutorial](https://bitcoin.org/en/full-node).  
 Configure your bitcoin.conf file to allow Remote Procedure Call :
 ```sh
-server=1 # Enabled Remote Procedure Call
-rpcport=8332 # Default RPC port
-rpcbind=NodeIpBinding # Remove this option if you are in localhost
-rpcallowip=IpAcceptedForRPC # Remove this option if you are in localhost
-rpcuser=BitcoinUser # Needed for RPC Auth
-rpcpassword=BitcoinPassword # Needed for RPC Auth
+# Enable Remote Procedure Call
+server=1
+# Default RPC port
+rpcport=8332
+# Remove this option if you are in localhost
+rpcbind=NodeIpBinding
+# Remove this option if you are in localhost
+rpcallowip=IpAcceptedForRPC
+# Needed for RPC Auth
+rpcuser=BitcoinUser
+# Needed for RPC Auth
+rpcpassword=BitcoinPassword 
 ```
 
 ### Installing
@@ -32,8 +38,6 @@ Clone this repository.
 #### Install pypy3 (linux)
 
 ```sh
-$ add-apt-repository ppa:pypy/ppa
-$ apt update
 $ apt install pypy3
 ```
 
@@ -41,20 +45,24 @@ $ apt install pypy3
 
 Install dependencies using pip3 :
 ```sh
-$ pip3 install -r requirements
+$ pip3 install -r requirements.txt
 ```
 
 ### Running
 Edit **config.ini** :
 ```ini
 [Bitcoin]
-Url = http://127.0.0.1:8332/ # Node ip and port
-RpcUser = BitcoinUser # RPC user
-RpcPassword = BitcoinPassword # RPC password
+# Node ip and port
+Url = http://127.0.0.1:8332/
+# RPC user
+RpcUser = BitcoinUser
+# RPC password
+RpcPassword = BitcoinPassword
 ```
 
 This code runs faster with Pypy :
 ```sh
+cd blockchain-extractor
 nohup pypy3 blockchain-extractor.py 2> blockchain.err | gzip -c > blockchain.gz &
 ```
 The output file size for blockchain.gz is close to **500 GB**, with a collection duration close to **32 hours**.  
