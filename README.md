@@ -59,8 +59,8 @@ RpcPassword = BitcoinPassword
 
 ### Running
 ```sh
+# [source] is a block height integer where you want to start the extraction default: best block hash
 # [target] is a block height integer where you want to stop the extraction
-# [source] is a block height integer where you want to start the extraction default is best block hash
 pypy3 blockchain-extractor.py [source] [target]  2> output.err | gzip -c > output.gz 
 # If the source is not specified it will start from the last block known a.k.a best block hash
 pypy3 blockchain-extractor.py [target]  2> output.err | gzip -c > output.gz
@@ -79,7 +79,7 @@ You can specify a target block :
 pypy3 blockchain-extractor.py 500000 | gzip -c > last_block_to_block_500000.gz
 ```
 
-You can specify a target block and a source block :
+You can specify a source block and a target block :
 ```sh
 # This will parse the blockchain from the source block to the target block
 pypy3 blockchain-extractor.py 200000 100000 | gzip -c > block_200000_to_block_100000.gz
