@@ -27,23 +27,30 @@ pwd = config['Bitcoin']['RpcPassword']
 
 headers = {'content-type': 'text/plain;'}
 
+# Get the last block hash added to the blockchain a.k.a best block hash
+jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getbestblockhash", "params": [] }'
+best_block_hash = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
+
 # Check if user specified a target block
 if len(sys.argv) == 2 :
     target = int(sys.argv[1])
-# If no, it will parse all blockchain
+    source_block_hash = best_block_hash
+# Check if user specified a target block and a source block
+elif len(sys.argv) == 3 :
+    target = int(sys.argv[1])
+    source = int(sys.argv[2])
+    # Get source block hash
+    jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblockhash", "params": [%i] }' % (source)
+    source_block_hash = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
+# Else, it will parse all the blockchain from the best block hash known
 else :
     target = 0
+    source_block_hash = best_block_hash
 
-# Get the last block hash added to the blockchain
-data = '{"jsonrpc": "1.0", "id":"curltest", "method": "getbestblockhash", "params": [] }'
-best_block_hash = requests.post(
-    url, headers=headers, data=data, auth=(user, pwd)).json()['result']
-# Get last block data
-data = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (
-    best_block_hash)
-block = requests.post(
-    url, headers=headers, data=data, auth=(user, pwd)).json()['result']
-# Write last block
+# Get source block data
+jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (source_block_hash)
+block = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
+# Write source block
 sys.stdout.write(json.dumps(block)+'\n')
 # Needed variables to parse the blockchain
 block_height = block['height']
@@ -52,11 +59,9 @@ previous_block_hash = block['previousblockhash']
 # Reading the blockchain from the end
 # Looping to get previous block data (transactions included)
 while int(block_height) >= target:
-    data = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (
-        previous_block_hash)
+    jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (previous_block_hash)
     try:
-        block = requests.post(
-            url, headers=headers, data=data, auth=(user, pwd))
+        block = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd))
         block.raise_for_status()
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)

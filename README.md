@@ -36,20 +36,17 @@ rpcpassword=BitcoinPassword
 Clone this repository.
 
 #### Install pypy3 (linux)
-
+This code runs faster with Pypy :
 ```sh
 $ apt install pypy3
 ```
 
 #### Install python dependencies
-
 Install dependencies using pip3 :
 ```sh
 $ pip3 install -r requirements.txt
 ```
-
-### Running
-Edit **config.ini** :
+#### Edit **config.ini** :
 ```ini
 [Bitcoin]
 # Node ip and port
@@ -60,18 +57,33 @@ RpcUser = BitcoinUser
 RpcPassword = BitcoinPassword
 ```
 
-This code runs faster with Pypy :
+### Running
+
+```sh
+pypy3 blockchain-extractor.py [target] [source] 2> output.err | gzip -c > output.gz 
+# [target] is a block height integer where you want to stop the extraction
+# [source] is a block height integer where you want to start the extraction
+```
+
+Running with nohup to keep the task in background:
 ```sh
 cd blockchain-extractor
 nohup pypy3 blockchain-extractor.py 2> blockchain.err | gzip -c > blockchain.gz &
 ```
-The output file size for blockchain.gz is close to **500 GB**, with a collection duration close to **32 hours**. 
+The output file size for the full blockchain.gz is close to **500 GB**, with a collection duration close to **32 hours**. 
 
 You can specify a target block :
 ```sh
-# This will parse the blockchain from the end to the targetted block
+# This will parse the blockchain from the end to the target block
 pypy3 blockchain-extractor.py 500000 | gzip -c > last_block_to_block_500000.gz
 ```
+
+You can specify a target block and a source block :
+```sh
+# This will parse the blockchain from the source block to the target block
+pypy3 blockchain-extractor.py 100000 200000 | gzip -c > block_200000_to_block_100000.gz
+```
+
 
 ### Monitoring
 Monitor the extraction with stderr output file  :
