@@ -27,6 +27,13 @@ pwd = config['Bitcoin']['RpcPassword']
 
 headers = {'content-type': 'text/plain;'}
 
+# Check if user specified a target block
+if len(sys.argv) == 2 :
+    target = int(sys.argv[1])
+# If no, it will parse all blockchain
+else :
+    target = 0
+
 # Get the last block hash added to the blockchain
 data = '{"jsonrpc": "1.0", "id":"curltest", "method": "getbestblockhash", "params": [] }'
 best_block_hash = requests.post(
@@ -44,7 +51,7 @@ previous_block_hash = block['previousblockhash']
 
 # Reading the blockchain from the end
 # Looping to get previous block data (transactions included)
-while int(block_height) >= 0:
+while int(block_height) >= target:
     data = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (
         previous_block_hash)
     try:
@@ -56,10 +63,12 @@ while int(block_height) >= 0:
     block = block.json()['result']
     # Write current block
     sys.stdout.write(json.dumps(block)+'\n')
-    if int(block_height) == 0:
-        break
     block_height = block['height']
+    # Write block height to stderr
     sys.stderr.write(str(block_height)+'\n')
     sys.stderr.flush()
+    # Break while if the target is reached
+    if int(block_height) == target:
+        break
     # Previous block hash is the next block to parse
     previous_block_hash = block['previousblockhash']

@@ -65,7 +65,21 @@ This code runs faster with Pypy :
 cd blockchain-extractor
 nohup pypy3 blockchain-extractor.py 2> blockchain.err | gzip -c > blockchain.gz &
 ```
-The output file size for blockchain.gz is close to **500 GB**, with a collection duration close to **32 hours**.  
+The output file size for blockchain.gz is close to **500 GB**, with a collection duration close to **32 hours**. 
+
+You can specify a target block :
+```sh
+# This will parse the blockchain from the end to the targetted block
+pypy3 blockchain-extractor.py 500000 | gzip -c > last_block_to_block_500000.gz
+```
+
+### Monitoring
+Monitor the extraction with stderr output file  :
+```sh
+# It will show you the last block height written
+cat blockchain.err | head -n 1
+```
+
 
 ## Documentation
 ### Processing
