@@ -37,8 +37,8 @@ if len(sys.argv) == 2 :
     source_block_hash = best_block_hash
 # Check if user specified a target block and a source block
 elif len(sys.argv) == 3 :
-    target = int(sys.argv[1])
-    source = int(sys.argv[2])
+    source = int(sys.argv[1])
+    target = int(sys.argv[2])
     # Get source block hash
     jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblockhash", "params": [%i] }' % (source)
     source_block_hash = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
@@ -55,6 +55,7 @@ sys.stdout.write(json.dumps(block)+'\n')
 # Needed variables to parse the blockchain
 block_height = block['height']
 previous_block_hash = block['previousblockhash']
+sys.stderr.write(str(block_height)+'\n')
 
 # Reading the blockchain from the end
 # Looping to get previous block data (transactions included)
