@@ -14,9 +14,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import requests
-import json
+import argparse
 import configparser
+import json
+import requests
 import sys
 
 config = configparser.ConfigParser()
@@ -27,25 +28,20 @@ pwd = config['Bitcoin']['RpcPassword']
 
 headers = {'content-type': 'text/plain;'}
 
-# Get the last block hash added to the blockchain a.k.a best block hash
-jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getbestblockhash", "params": [] }'
-best_block_hash = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
+# If there are no arguments specified,
+# blockchain extraction will start from the last block mined a.k.a best block to the first block mined a.k.a genesis block
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--source", type=int, help="Specify the first block from which you start the extraction")
+parser.add_argument("-t", "--target", type=int, help="Specify the last block you want to extract", default=0)
+args = parser.parse_args()
 
-# Check if user specified a target block
-if len(sys.argv) == 2 :
-    target = int(sys.argv[1])
-    source_block_hash = best_block_hash
-# Check if user specified a target block and a source block
-elif len(sys.argv) == 3 :
-    source = int(sys.argv[1])
-    target = int(sys.argv[2])
-    # Get source block hash
-    jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblockhash", "params": [%i] }' % (source)
+# If None, get the last block hash added to the blockchain a.k.a best block hash
+if args.source is None :
+    jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getbestblockhash", "params": [] }'
     source_block_hash = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
-# Else, it will parse all the blockchain from the best block hash known
 else :
-    target = 0
-    source_block_hash = best_block_hash
+    jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblockhash", "params": [%i] }' % (args.source)
+    source_block_hash = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
 
 # Get source block data
 jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (source_block_hash)
@@ -59,7 +55,7 @@ sys.stderr.write(str(block_height)+'\n')
 
 # Reading the blockchain from the end
 # Looping to get previous block data (transactions included)
-while int(block_height) >= target:
+while int(block_height) >= args.target:
     jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (previous_block_hash)
     try:
         block = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd))
@@ -74,7 +70,7 @@ while int(block_height) >= target:
     sys.stderr.write(str(block_height)+'\n')
     sys.stderr.flush()
     # Break while if the target is reached
-    if int(block_height) == target:
+    if int(block_height) == args.target:
         break
     # Previous block hash is the next block to parse
     previous_block_hash = block['previousblockhash']
