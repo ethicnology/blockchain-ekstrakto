@@ -58,12 +58,14 @@ RpcPassword = BitcoinPassword
 ```
 
 ### Running
+If there are no arguments specified, blockchain extraction will start from the last block mined a.k.a best block to the first block mined a.k.a genesis block
 ```sh
-# [source] is a block height integer where you want to start the extraction default: best block hash
-# [target] is a block height integer where you want to stop the extraction
-pypy3 blockchain-extractor.py [source] [target]  2> output.err | gzip -c > output.gz 
-# If the source is not specified it will start from the last block known a.k.a best block hash
-pypy3 blockchain-extractor.py [target]  2> output.err | gzip -c > output.gz
+python3 blockchain-extractor.py --help
+# usage: blockchain-extractor.py [-h] [-s SOURCE] [-t TARGET]
+# optional arguments:
+#  -h, --help show this help message and exit
+#  -s SOURCE, --source SOURCE Specify the first block from which you start the extraction
+#  -t TARGET, --target TARGET Specify the last block you want to extract
 ```
 
 Running with nohup to keep the task in background:
@@ -76,13 +78,13 @@ The output file size for the full blockchain.gz is close to **500 GB**, with a c
 You can specify a target block :
 ```sh
 # This will parse the blockchain from the end to the target block
-pypy3 blockchain-extractor.py 500000 | gzip -c > last_block_to_block_500000.gz
+pypy3 blockchain-extractor.py --target 500000 | gzip -c > last_block_to_block_500000.gz
 ```
 
 You can specify a source block and a target block :
 ```sh
 # This will parse the blockchain from the source block to the target block
-pypy3 blockchain-extractor.py 200000 100000 | gzip -c > block_200000_to_block_100000.gz
+pypy3 blockchain-extractor.py --source 200000 --target 100000 | gzip -c > block_200000_to_block_100000.gz
 ```
 
 ### Monitoring
