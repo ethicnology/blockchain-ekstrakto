@@ -55,7 +55,7 @@ sys.stderr.write(str(block_height)+'\n')
 
 # Reading the blockchain from the end
 # Looping to get previous block data (transactions included)
-while int(block_height) >= args.target:
+while int(block_height) > args.target:
     jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (previous_block_hash)
     try:
         block = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd))
