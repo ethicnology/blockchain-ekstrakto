@@ -55,17 +55,22 @@ Url = http://127.0.0.1:8332/
 RpcUser = BitcoinUser
 # RPC password
 RpcPassword = BitcoinPassword
+# There are CLI options for lazy dudes
 ```
 
 ### Running
 If there are no arguments specified, blockchain extraction will start from the last block mined a.k.a best block to the first block mined a.k.a genesis block
 ```sh
 python3 blockchain-extractor.py --help
-# usage: blockchain-extractor.py [-h] [-s SOURCE] [-t TARGET]
+# usage: blockchain-extractor.py [-h] [-s SOURCE] [-t TARGET] [-n NODE] [-u USER] [-p PASSWORD]
+# 
 # optional arguments:
-#  -h, --help show this help message and exit
-#  -s SOURCE, --source SOURCE Specify the first block from which you start the extraction
-#  -t TARGET, --target TARGET Specify the last block you want to extract
+#   -h, --help            show this help message and exit
+#   -s SOURCE, --source SOURCE  Specify the first block from which you start the extraction
+#   -t TARGET, --target TARGET  Specify the last block you want to extract
+#   -n NODE, --node NODE  Node ip and port, example : http://127.0.0.1:8332/
+#   -u USER, --user USER  RPC user specified in your bitcoin.conf
+#   -p PASSWORD, --password PASSWORD  RPC password specified in your bitcoin.conf
 ```
 
 Running with nohup to keep the task in background:
