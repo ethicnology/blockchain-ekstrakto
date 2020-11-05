@@ -23,9 +23,6 @@ import os
 
 config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
-url = config['Bitcoin']['Url']
-user = config['Bitcoin']['RpcUser']
-pwd = config['Bitcoin']['RpcPassword']
 
 headers = {'content-type': 'text/plain;'}
 
@@ -34,24 +31,28 @@ headers = {'content-type': 'text/plain;'}
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--source", type=int, help="Specify the first block from which you start the extraction")
 parser.add_argument("-t", "--target", type=int, help="Specify the last block you want to extract", default=0)
+parser.add_argument("-n", "--node", type=str, help="Node ip and port, example : http://127.0.0.1:8332/", default=config['Bitcoin']['Url'])
+parser.add_argument("-u", "--user", type=str, help="RPC user specified in your bitcoin.conf", default=config['Bitcoin']['RpcUser'])
+parser.add_argument("-p", "--password", type=str, help="RPC password specified in your bitcoin.conf", default=config['Bitcoin']['RpcPassword'])
 args = parser.parse_args()
 
 # If None, get the last block hash added to the blockchain a.k.a best block hash
 if args.source is None :
     jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getbestblockhash", "params": [] }'
-    source_block_hash = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
+    source_block_hash = requests.post(args.node, headers=headers, data=jsonrpc, auth=(args.user, args.password)).json()['result']
 else :
     jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblockhash", "params": [%i] }' % (args.source)
-    source_block_hash = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
+    source_block_hash = requests.post(args.node, headers=headers, data=jsonrpc, auth=(args.user, args.password)).json()['result']
 
 # Get source block data
 jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (source_block_hash)
-block = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd)).json()['result']
+block = requests.post(args.node, headers=headers, data=jsonrpc, auth=(args.user, args.password)).json()['result']
 # Write source block
 sys.stdout.write(json.dumps(block)+'\n')
 # Needed variables to parse the blockchain
 block_height = block['height']
-previous_block_hash = block['previousblockhash']
+if args.source != 0 :
+    previous_block_hash = block['previousblockhash']
 sys.stderr.write(str(block_height)+'\n')
 
 # Reading the blockchain from the end
@@ -59,7 +60,7 @@ sys.stderr.write(str(block_height)+'\n')
 while int(block_height) > args.target:
     jsonrpc = '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": ["%s", 2] }' % (previous_block_hash)
     try:
-        block = requests.post(url, headers=headers, data=jsonrpc, auth=(user, pwd))
+        block = requests.post(args.node, headers=headers, data=jsonrpc, auth=(args.user, args.password))
         block.raise_for_status()
     except requests.exceptions.HTTPError as err:
         raise SystemExit(err)
