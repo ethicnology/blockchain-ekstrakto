@@ -19,9 +19,10 @@ import configparser
 import json
 import requests
 import sys
+import os
 
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 url = config['Bitcoin']['Url']
 user = config['Bitcoin']['RpcUser']
 pwd = config['Bitcoin']['RpcPassword']
