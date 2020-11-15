@@ -95,8 +95,8 @@ pypy3 blockchain-extractor.py --source 200000 --target 100000 | gzip -c > block_
 ### Monitoring
 Monitor the extraction with stderr output file  :
 ```sh
-# It will show you the last block height written
-cat blockchain.err | head -n 1
+# It will show you last blocks written
+tail -f blockchain.err
 ```
 
 
