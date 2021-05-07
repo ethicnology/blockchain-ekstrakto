@@ -1,4 +1,4 @@
-# Blockchain extractor is a Python program which extracts all Bitcoin blockchain data using Bitcoin Core.
+# Blockchain ekstrakto is a Python program which extracts all Bitcoin blockchain data using Bitcoin Core.
 # Copyright (C) 2020  ethicnology
 
 # This program is free software: you can redistribute it and/or modify

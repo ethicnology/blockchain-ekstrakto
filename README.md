@@ -1,6 +1,6 @@
-# Blockchain extractor
+# Blockchain ekstrakto
 
-Blockchain extractor is a Python program which extracts all Bitcoin blockchain data using Bitcoin Core.  
+Blockchain ekstrakto is a Python program which extracts all Bitcoin blockchain data using Bitcoin Core.  
 It aims at providing the purest dataset thanks to a transparent collection method, limiting processing between ground truth and the output.  
 It collects data at application level using RPC (Remote Procedure Call) to request Bitcoin Core and writes a line corresponding to a full block JSON response.
 
@@ -61,8 +61,8 @@ RpcPassword = BitcoinPassword
 ### Running
 If there are no arguments specified, blockchain extraction will start from the last block mined a.k.a best block to the first block mined a.k.a genesis block
 ```sh
-python3 blockchain-extractor.py --help
-# usage: blockchain-extractor.py [-h] [-s SOURCE] [-t TARGET] [-n NODE] [-u USER] [-p PASSWORD]
+python3 blockchain-ekstrakto.py --help
+# usage: blockchain-ekstrakto.py [-h] [-s SOURCE] [-t TARGET] [-n NODE] [-u USER] [-p PASSWORD]
 # 
 # optional arguments:
 #   -h, --help            show this help message and exit
@@ -75,21 +75,21 @@ python3 blockchain-extractor.py --help
 
 Running with nohup to keep the task in background:
 ```sh
-cd blockchain-extractor
-nohup pypy3 blockchain-extractor.py 2> blockchain.err | gzip -c > blockchain.gz &
+cd blockchain-ekstrakto
+nohup pypy3 blockchain-ekstrakto.py 2> blockchain.err | gzip -c > blockchain.gz &
 ```
 The output file size for the full blockchain.gz is close to **500 GB**, with a collection duration close to **32 hours**. 
 
 You can specify a target block :
 ```sh
 # This will parse the blockchain from the end to the target block
-pypy3 blockchain-extractor.py --target 500000 | gzip -c > last_block_to_block_500000.gz
+pypy3 blockchain-ekstrakto.py --target 500000 | gzip -c > last_block_to_block_500000.gz
 ```
 
 You can specify a source block and a target block :
 ```sh
 # This will parse the blockchain from the source block to the target block
-pypy3 blockchain-extractor.py --source 200000 --target 100000 | gzip -c > block_200000_to_block_100000.gz
+pypy3 blockchain-ekstrakto.py --source 200000 --target 100000 | gzip -c > block_200000_to_block_100000.gz
 ```
 
 ### Monitoring
